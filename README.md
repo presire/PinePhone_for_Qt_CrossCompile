@@ -12,7 +12,7 @@ Get the latest updates on PinePhone.
 
     sudo apt-get update  
     sudo apt-get dist-upgrade  
-    sudo reboot  
+    sudo shutdown -r now  
 <br>
 
 Install SSH server on PinePhone.  
@@ -77,13 +77,20 @@ With the following settings, the rsync command will be executed with super user 
     echo "$USER ALL=NOPASSWD:$(which rsync)" | sudo tee --append /etc/sudoer
 <br>
 
+Restart PinePhone just in case.  
+
+    sudo shutdown -r now
+<br>
+
 # 2. Qt Source Code Download (Linux PC)
     wget https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz  
     tar xf qt-everywhere-opensource-src-5.15.2.tar.gz  
 <br>
 
 # 3. Download the Qt target file from this Github (Linux PC)
-    cp -r linux-pinephone-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/devices  
+    git clone https://github.com/presire/PinePhone_for_Qt_CrossCompile.git
+    
+    cp -r PinePhone_for_Qt_CrossCompile/linux-pinephone-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/devices  
 <br>
 
 # 4. Setting Linux PC and Download GCC ARM Toolchain (Linux PC)
@@ -206,7 +213,7 @@ Launch Qt Creator.
 
 Qt Creator - [Project] - [Run] - [Run Settings] - [Environment] - [Details] - [Add]  
 then, Click [Fetch Device Environment]Button.  
-*(Be sure to click on it when you run the debugger)*  
+*(when you run the debugger, Be sure to click on [Fetch Device Environment]Button)*  
 
     Variable - QT_QPA_PLATFORMTHEME  
     Value - qt5ct  
@@ -215,4 +222,27 @@ then, Click [Fetch Device Environment]Button.
     Value : 0  or   Value : 0.0  
 <br>
 
-Make sure you can debug the project.  
+* Setting up the Qt compiler Linaro GCC AArh64 Toolchain.  
+Qt Creator - [Tool] - [Option] - [Kits] - [Compiler] -[Add] - [GCC] - [C]  
+/<Linaro GCC AArch64 Toolchain's Directory>/bin/aarch64-linux-gnu-gcc  
+Qt Creator - [Tool] - [Option] - [Kits] - [Compiler] -[Add] - [GCC] - [C++]  
+/<Linaro GCC AArch64 Toolchain's Directory>/bin/aarch64-linux-gnu-g++  
+
+* Setting up the Qt Debugger Linaro GCC AArh64 Toolchain.  
+Qt Creator - [Tool] - [Option] - [Kits] - [Debugger] -[Add]  
+/<Linaro GCC AArch64 Toolchain's Directory>/bin/aarch64-linux-gnu-gdb  
+
+* Setting up the Qt Qmake for Qt Cross-Compile.  
+Qt Creator - [Tool] - [Option] - [Kits] - [Qt version] -[Add]  
+/<Qt Tool for Linux PC's Directory>/bin/qmake  
+
+* Setting up the Qt Qmake for Qt Cross-Compile.  
+Qt Creator - [Tool] - [Option] - [Kits] - [Kits] -[Add]  
+Compiler : The compiler configured above  
+Debugger : The debugger configured above  
+Qt version : The Qmake configured above  
+Qt mkspec : /<Qt Tool for Linux PC's Directory>/mkspecs/devices/linux-pinephone-g++  
+Sysroot(It can be set or unset) : /System Root PinePhone
+<br>
+
+Make sure you can debug Qt project.  
