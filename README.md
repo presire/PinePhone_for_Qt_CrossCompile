@@ -242,7 +242,7 @@ Compiler : The compiler configured above
 Debugger : The debugger configured above  
 Qt version : The Qmake configured above  
 Qt mkspec : /<Qt Tool for Linux PC's Directory>/mkspecs/devices/linux-pinephone-g++  
-Sysroot(It can be set or unset) : /System Root PinePhone
+Sysroot(It can be set or unset) : /\<System Root PinePhone\>
 <br>
 
 Make sure you can debug Qt project.  
