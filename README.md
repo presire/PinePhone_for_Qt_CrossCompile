@@ -2,14 +2,28 @@
 
 # Preface
 Here, I use SUSE for my Linux PC and Mobian(Phosh) for my PinePhone.
-<br>
 When building Qt, please adapt to each user's environment.  
 <br>
+*If you are using Mobian OS, I think you can do Qt Cross-Compile with similar steps to Raspberry Pi.*  
+<br>
 
-# 1. PinePhone install Dependencies (Mobian OS)
+# 1. Install the necessary dependencies for PinePhone and SSH Setting (Mobian OS)
+Get the latest updates on PinePhone.  
+
     sudo apt-get update  
     sudo apt-get dist-upgrade  
     sudo reboot  
+<br>
+
+Install SSH server on PinePhone.  
+
+        sudo apt-get install openssh-server  
+<br>
+
+Configure the SSH Server to start automatically, and start the SSH Server.  
+
+        sudo systemctl enable ssh  
+        sudo systemctl restart ssh  
 <br>
 
 Install the dependencies required to build the Qt Library.  
@@ -21,8 +35,37 @@ Install the dependencies required to build the Qt Library.
                           libpcre16-3 libpcre3-dev libpcre32-3 libpcrecpp0v5 libselinux1-dev libsepol1-dev libwacom-dev libassimp-dev libassimp5 \  
                           libfontconfig1-dev libdbus-1-dev libnss3-dev libxkbcommon-dev libjpeg-dev libasound2-dev libudev-dev libxcb-xinerama0 libxcb-xinerama0-dev libpugixml1v5 \  
                           libsqlite3-dev libxslt1-dev libssl-dev \  
+                          libatspi2.0-0 libatspi2.0-dev libsctp1 libsctp-dev \  
                           libwayland-bin libwayland-dev libwayland-egl++0 libwayland-egl-backend-dev libwayland-client++0 libwayland-client-extra++0 libwayland-cursor++0 wayland-scanner++ \
                           waylandpp-dev libweston-9-dev libgles2-mesa-dev libegl-dev libgegl-dev libegl1-mesa-dev libgles-dev libwayland-egl1-mesa
+<br>
+
+*If you want to use other features, you should also install the following dependencies.*  
+
+* Bluetooth  
+bluez bluez-tools libbluetooth-dev	
+
+* Photo  
+libjpeg-dev libpng-dev libtiff-dev  
+
+* Codec  
+libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev  
+
+* Multimedia  
+libgstreamer1.0-0 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base  
+gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad  
+libgstreamer-plugins-bad1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-tools  
+gstreamer1.0-alsa gstreamer1.0-x gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5  
+libwayland-dev  
+
+* ALSA audio  
+libasound2-dev  
+
+* Pulse audio  
+pulseaudio libpulse-dev	 
+
+* OpenAL audio  
+libopenal-data libsndio7.0 libopenal1 libopenal-dev  
 <br>
 
 Use the rsync command to synchronize the files between Linux PC and PinePhone.  
@@ -110,6 +153,11 @@ Deploy the built Qt library to PinePhone.
 <br>
 
 # 9. Setting Qt LIBRARY Path and etc... (Mobian OS)
+Since the Qt Library you uploaded to PinePhone may have root privileges, execute the following command.  
+
+        sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2  
+<br>
+
 Add the following content to the bottom line of the .profile.  
   
     export LD_LIBRARY_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:$LD_LIBRARY_PATH"  
@@ -122,12 +170,13 @@ Add the following content to the bottom line of the .profile.
     export QT_QPA_PLATFORM_PLUGIN_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/platforms"  
     export QML_IMPORT_TRACE=1  
 <br>
-<br>
+
 Update the .profile.  
 
     source .profile  
     sudo ldconfig  
 <br>
+
 Restart PinePhone.  
 
     sudo shutdown -r now  
