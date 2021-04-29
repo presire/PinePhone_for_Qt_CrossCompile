@@ -1,7 +1,7 @@
 # PinePhone(Mobian OS)_for_Qt_CrossCompile
 
 # Preface
-Here, I use SUSE for my Linux PC and Mobian(Phosh) for my PinePhone.
+Here, I use SUSE for my Linux PC and Mobian(Phosh) for my PinePhone.  
 When building Qt, please adapt to each user's environment.  
 <br>
 *If you are using Mobian OS, I think you can do Qt Cross-Compile with similar steps to Raspberry Pi.*  
@@ -110,10 +110,27 @@ for building **Wayland-Scanner**, You need to install **Meson** & **Ninja**.
 <br>
 
 # 6. Download PinePhone's System Root (Linux PC)
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/lib /<System Root>/  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/lib /<System Root>/usr  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/include /<System Root>/usr  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig /<System Root>/usr/share  
+It is necessary to synchronize with the root directory of PinePhone, create the system root directory.  
+
+    mkdir -p ~/<System Root PinePhone> \  
+             ~/<System Root PinePhone>/lib \  
+             ~/<System Root PinePhone>/usr \  
+             ~/<System Root PinePhone>/usr/share  
+<br>
+
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/lib /<System Root PinePhone>/  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/lib /<System Root PinePhone>/usr  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/include /<System Root PinePhone>/usr  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig /<System Root PinePhone>/usr/share  
+<br>
+
+Adjust the symbolic links of downloaded files and directories relative to each other.  
+Since fixQualifiedLibraryPaths does not work properly, download and run the script provided.  
+
+    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py  
+    chmod +x sysroot-relativelinks.py  
+    
+    . /sysroot-relativelinks.py ~/<System Root PinePhone>  
 <br>
 
 # 7. Build Qt Source Code (Linux PC)
@@ -138,6 +155,7 @@ Build the Qt source code.
     -extprefix /<Qt Library for PinePhone> \  
     -hostprefix /<Qt Tool for Linux PC>  
 <br>
+
 If the Configure script succeeds, execute the make or gmake command.  
 
     make -j $(nproc) or gmake -j $(nproc)  
