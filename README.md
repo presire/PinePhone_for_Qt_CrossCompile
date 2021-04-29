@@ -17,13 +17,13 @@ Get the latest updates on PinePhone.
 
 Install SSH server on PinePhone.  
 
-        sudo apt-get install openssh-server  
+    sudo apt-get install openssh-server  
 <br>
 
 Configure the SSH Server to start automatically, and start the SSH Server.  
 
-        sudo systemctl enable ssh  
-        sudo systemctl restart ssh  
+    sudo systemctl enable ssh  
+    sudo systemctl restart ssh  
 <br>
 
 Install the dependencies required to build the Qt Library.  
@@ -82,16 +82,17 @@ With the following settings, the rsync command will be executed with super user 
     tar xf qt-everywhere-opensource-src-5.15.2.tar.gz  
 <br>
 
-# 3. Download the file from this Github (Linux PC)
+# 3. Download the Qt target file from this Github (Linux PC)
     cp -r linux-pinephone-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/devices  
 <br>
 
-# 4. Download GCC ARM Toolchain (Linux PC)
+# 4. Setting Linux PC and Download GCC ARM Toolchain (Linux PC)
 Install the dependencies required to build the Qt Library for Linux PC. (I use SUSE)  
-(Perhaps texinfo is unnecessary.)  
+(Perhaps **texinfo** is unnecessary.)  
 
     sudo zypper install autoconf automake cmake unzip tar git wget pkg-config gperf gcc gcc-c++ \  
                         gawk bison openssl flex figlet pigz ncurses-devel ncurses5-devel texinfo  
+<br>
 
 Download GCC ARM Toolchain. (https://releases.linaro.org/components/toolchain/binaries)  
 
@@ -100,7 +101,8 @@ Download GCC ARM Toolchain. (https://releases.linaro.org/components/toolchain/bi
 <br>
 
 # 5. Download & Install Wayland-Scanner (Linux PC)
-for building **Wayland-Scanner**, You need to install **Meson** & **Ninja**.  
+for building **Wayland-Scanner**.  
+You need to install **Meson** & **Ninja**.  
 
     git clone https://github.com/wayland-project/wayland.git  
     cd wayland && mkdir build  
@@ -112,16 +114,15 @@ for building **Wayland-Scanner**, You need to install **Meson** & **Ninja**.
 # 6. Download PinePhone's System Root (Linux PC)
 It is necessary to synchronize with the root directory of PinePhone, create the system root directory.  
 
-    mkdir -p ~/<System Root PinePhone> \  
-             ~/<System Root PinePhone>/lib \  
-             ~/<System Root PinePhone>/usr \  
+    mkdir -p ~/<System Root PinePhone> && \  
+             ~/<System Root PinePhone>/usr && \  
              ~/<System Root PinePhone>/usr/share  
 <br>
 
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/lib /<System Root PinePhone>/  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/lib /<System Root PinePhone>/usr  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/include /<System Root PinePhone>/usr  
-    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig /<System Root PinePhone>/usr/share  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/lib ~/<System Root PinePhone>/  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/lib ~/<System Root PinePhone>/usr  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/include ~/<System Root PinePhone>/usr  
+    rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig ~/<System Root PinePhone>/usr/share  
 <br>
 
 Adjust the symbolic links of downloaded files and directories relative to each other.  
@@ -130,7 +131,7 @@ Since fixQualifiedLibraryPaths does not work properly, download and run the scri
     wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py  
     chmod +x sysroot-relativelinks.py  
     
-    . /sysroot-relativelinks.py ~/<System Root PinePhone>  
+    ./sysroot-relativelinks.py ~/<System Root PinePhone>  
 <br>
 
 # 7. Build Qt Source Code (Linux PC)
@@ -138,8 +139,8 @@ Build the Qt source code.
 
     export PATH="/<Above, Wayland-Scanner's Install Directory>/bin:$PATH"  
     
-    PKG_CONFIG_PATH=/<System Root>/usr/lib/aarch64-linux-gnu/pkgconfig \  
-    PKG_CONFIG_LIBDIR=/<System Root>/usr/lib/pkgconfig:/<System Root>/usr/lib/aarch64-linux-gnu/pkgconfig:/<System Root>/usr/share/pkgconfig \  
+    PKG_CONFIG_PATH=/<System Root PinePhone>/usr/lib/aarch64-linux-gnu/pkgconfig \  
+    PKG_CONFIG_LIBDIR=/<System Root PinePhone>/usr/lib/pkgconfig:/<System Root>/usr/lib/aarch64-linux-gnu/pkgconfig:/<System Root>/usr/share/pkgconfig \  
     ../<qt-everywhere-src-5.15.2>/configure -v -release  -opensource -confirm-license \  
     -opengl es2 \  
     -qpa wayland \  
@@ -150,7 +151,7 @@ Build the Qt source code.
     -skip qtgamepad -skip qtpurchasing -skip qtcharts -skip qtsensors \   (If not required)  
     -skip qtlocation -skip qtspeech -skip qtlottie \                      (If not required)  
     -skip qtdoc \  
-    -sysroot /<System Root> \  
+    -sysroot /<System Root PinePhone> \  
     -prefix /<in the future, You develop Qt Software's Directory> \  
     -extprefix /<Qt Library for PinePhone> \  
     -hostprefix /<Qt Tool for Linux PC>  
@@ -173,7 +174,7 @@ Deploy the built Qt library to PinePhone.
 # 9. Setting Qt LIBRARY Path and etc... (Mobian OS)
 Since the Qt Library you uploaded to PinePhone may have root privileges, execute the following command.  
 
-        sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2  
+    sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2  
 <br>
 
 Add the following content to the bottom line of the .profile.  
