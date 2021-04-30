@@ -84,9 +84,17 @@ Restart PinePhone just in case.
     sudo shutdown -r now
 <br>
 
-# 2. Qt Source Code Download (Linux PC)
+# 2. Qt Source Code Download and etc... (Linux PC)
     wget https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz  
     tar xf qt-everywhere-opensource-src-5.15.2.tar.gz  
+<br>
+Create the directories needed for the build.  
+
+    mkdir -p /<Build directory for Qt Souce Code> \  
+             /<System Root PinePhone>             \  
+             /<Qt Tool for Linux PC>/bin          \  
+             /<Qt Library for PinePhone>          \  
+             /<in the future, You develop Qt Software's Directory>  
 <br>
 
 # 3. Download the Qt target file from this Github (Linux PC)
@@ -110,14 +118,15 @@ Download GCC ARM Toolchain. (https://releases.linaro.org/components/toolchain/bi
 <br>
 
 # 5. Download & Install Wayland-Scanner (Linux PC)
-for building **Wayland-Scanner**.  
-You need to install **Meson** & **Ninja**.  
+You need to install **Meson** & **Ninja** for building **Wayland-Scanner**.  
 
     git clone https://github.com/wayland-project/wayland.git  
     cd wayland && mkdir build  
 
-    meson ./build/ --prefix=<Anywhere you like> -Ddocumentation=false  
+    meson ./build/ --prefix=<Install Directory for Wayland-Scanner> -Ddocumentation=false  
     ninja -C build/ install  
+    
+    cp /<Install Directory for Wayland-Scanner>/bin/wayland-scanner /<Qt Tool for Linux PC>/bin  
 <br>
 
 # 6. Download PinePhone's System Root (Linux PC)
@@ -146,7 +155,7 @@ Since fixQualifiedLibraryPaths does not work properly, download and run the scri
 # 7. Build Qt Source Code (Linux PC)
 Build the Qt source code.  
 
-    export PATH="/<Above, Wayland-Scanner's Install Directory>/bin:$PATH"  
+    export PATH="/<Qt Tool for Linux PC>/bin:$PATH"  
     
     PKG_CONFIG_PATH=/<System Root PinePhone>/usr/lib/aarch64-linux-gnu/pkgconfig \  
     PKG_CONFIG_LIBDIR=/<System Root PinePhone>/usr/lib/pkgconfig:/<System Root>/usr/lib/aarch64-linux-gnu/pkgconfig:/<System Root>/usr/share/pkgconfig \  
@@ -176,7 +185,7 @@ If the Configure script succeeds, execute the make or gmake command.
 # 8. Upload Qt Library (Linux PC)
 Deploy the built Qt library to PinePhone.  
 
-    rsync -avz --rsh="ssh" /<Above, Qt Library for PinePhone>/* \  
+    rsync -avz --rsh="ssh" --delete /<Above, Qt Library for PinePhone>/* \  
     <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2  
 <br>
 
