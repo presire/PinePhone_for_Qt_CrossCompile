@@ -4,6 +4,8 @@
 Here, I use SUSE for my Linux PC and Mobian(Phosh) for my PinePhone.  
 When building Qt, please adapt to each user's environment.  
 <br>
+**This article is Qt 5.15.2 Cross-Compile and Remote Debug.**
+<br>
 *If you are using Mobian OS, I think you can do Qt Cross-Compile with similar steps to Raspberry Pi.*  
 <br>
 
