@@ -10,6 +10,12 @@ When building Qt, please adapt to each user's environment.
 <br>
 
 # 1. Install the necessary dependencies for PinePhone and SSH Setting (Mobian OS)
+Create a directory for installing Qt libraries on PinePhone.  
+*This directory will be used in the last part of this article.*  
+
+	mkdir -p ~/InstallSoftware/Qt_5_15_2
+<br>
+
 Get the latest updates on PinePhone.  
 
     sudo apt-get update  
@@ -30,8 +36,8 @@ Configure the SSH Server to start automatically, and start the SSH Server.
 
 Install the dependencies required to build the Qt Library.  
 
-    sudo apt-get install  gdbserver python python3 \  
-                          ccache libicu-dev icu-devtools libhd-dev libsctp1 libsctp-dev libzstd1 libzstd-dev \  
+    sudo apt-get install  build-essential cmake unzip pkg-config gdbserver python python3 gfortran gdbserver python python3 \  
+                          ccache libicu-dev icu-devtools libhd-dev libsctp1 libsctp-dev libatspi2.0-0 libatspi2.0-dev libzstd1 libzstd-dev \  
                           libinput-bin libinput-dev libts0 libts-bin libts-dev libmtdev1 libmtdev-dev libevdev2 libevdev-dev \  
                           libblkid-dev libffi-dev libglib2.0-dev libglib2.0-dev-bin libmount-dev \  
                           libpcre16-3 libpcre3-dev libpcre32-3 libpcrecpp0v5 libselinux1-dev libsepol1-dev libwacom-dev libassimp-dev libassimp5 \  
