@@ -1,6 +1,6 @@
-# PinePhone(Mobian OS)_for_Qt_CrossCompile
+# PinePhone(Mobian OS)_for_Qt_CrossCompile  
 
-# Preface
+# Preface  
 **This article is Qt 5.15.2 Cross-Compile and Remote Debug.**  
 <br>
 Here, my Linux PC is SUSE, my PinePhone is Mobian(Phosh).  
@@ -8,7 +8,7 @@ When building Qt, please adapt to each user's environment.
 <br>
 If you are using Mobian OS, I think that it is similar to the Cross-Compilation procedure for Raspberry Pi.  
 <br>
-*Note:*
+*Note:*  
 *GCC AArch64 ToolChain 10.2 is not used because the Configure script fails.*  
 *If you have successfully built using GCC AArch64 ToolChain 10.2, please let me know the procedure.*  
 <br>
@@ -200,14 +200,13 @@ Deploy the built Qt library to PinePhone.
 <br>
 
 # 9. Setting Qt LIBRARY Path and etc... (Mobian OS)
-Since the Qt Library you uploaded to PinePhone may have root privileges, execute the following command.  
+<del>Since the Qt Library you uploaded to PinePhone may have root privileges, execute the following command.</del>  
 
-    sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2  
+    <del>sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2</del>  
 <br>
 
 Add the following content to the bottom line of the .profile.  
-  
-    export LD_LIBRARY_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:$LD_LIBRARY_PATH"  
+
     export QT_QPA_PLATFORMTHEME="qt5ct"  
     export DISPLAY=":0"  or  export DISPLAY=":0.0"  
     
@@ -215,12 +214,33 @@ Add the following content to the bottom line of the .profile.
     export QML2_IMPORT_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/qml"  
     export QT_PLUGIN_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins"  
     export QT_QPA_PLATFORM_PLUGIN_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/platforms"  
-    export QML_IMPORT_TRACE=1  
+    export QML_IMPORT_TRACE=1  # (if necessary)  
 <br>
 
-Update the .profile.  
+**Note:**  
+If you write the environment variable LD_LIBRARY_PATH in .profile,  
+you need to set again the environment variable LD_LIBRARY_PATH again in Qt Creator,  
+[Project] - [Run] - [Environment] when you use Qt Creator for remote debugging.  
 
+    # ~/.profile  
+    export LD_LIBRARY_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:$LD_LIBRARY_PATH"  
+    export LD_LIBRARY_PATH="/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling:$LD_LIBRARY_PATH"  
+<br>
+
+I personally recommend is to create a "00-Qt_5_15_2.conf" file in the /etc/ld.so.conf.d directory,  
+and write the path as shown below.  
+
+    # /etc/ld.so.conf.d/00-Qt_5_15_2.conf  
+    /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib  
+    /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling  
+<br>
+
+Update the .profile or /etc/ld.so.conf.d/00-Qt_5_15_2.conf.  
+
+    # .profile  
     source .profile  
+    
+    # /etc/ld.so.conf.d/00-Qt_5_15_2.conf  
     sudo ldconfig  
 <br>
 
@@ -241,6 +261,9 @@ then, Click [Fetch Device Environment]Button.
     
     Variable : DISPLAY  
     Value : 0  or   Value : 0.0  
+    
+    Variable : LD_LIBRARY_PATH  (When the environment variable LD_LIBRARY_PATH is written in PinePhone's .profile)  
+    Value : /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling  
 <br>
 
 * Setting up the Qt compiler Linaro GCC AArh64 Toolchain.  
@@ -263,7 +286,28 @@ Compiler : The compiler configured above
 Debugger : The debugger configured above  
 Qt version : The Qmake configured above  
 Qt mkspec : /<Qt Tool for Linux PC's Directory>/mkspecs/devices/linux-pinephone-g++  
-Sysroot(It can be set or unset) : /\<System Root PinePhone\>
+Sysroot(It can be set or unset) : /\<System Root PinePhone\>  
+
+* Setting Add GDB Start Command.  
+Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab  
+Additional Startup Commands : set sysroot target:/  
+
+**Above setting detail:**  
+**When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.**  
+**So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.**  
 <br>
+
+**For the warning shown below**  
+
+***while parsing target description (at line 68): Vector "v8f" references undefined type "ieee_half"***  
+***Could not load XML target description; ignoring***  
+
+I don't know if this is the right way to do it,  
+if you use GDB for the GCC AArch64 ToolChain, you won't get the warning output.  
+
+Download the GCC AArch64 ToolChain here.  
+Download "AArch64 GNU/Linux target (aarch64-none-linux-gnu)".  
+https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads  
+
 
 Make sure you can debug Qt project.  
