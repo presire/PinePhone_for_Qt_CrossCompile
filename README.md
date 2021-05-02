@@ -247,23 +247,11 @@ Update the .profile or /etc/ld.so.conf.d/00-Qt_5_15_2.conf.
 Restart PinePhone.  
 
     sudo shutdown -r now  
-<br>
+<br><br>
 
 # 10. Use Qt Creator
+## 10.1 Qt Creator General Settings  
 Launch Qt Creator.  
-
-Qt Creator - [Project] - [Run] - [Run Settings] - [Environment] - [Details] - [Add]  
-then, Click [Fetch Device Environment]Button.  
-*(when you run the debugger, Be sure to click on [Fetch Device Environment]Button)*  
-
-    Variable - QT_QPA_PLATFORMTHEME  
-    Value - qt5ct  
-    
-    Variable : DISPLAY  
-    Value : 0  or   Value : 0.0  
-    
-    Variable : LD_LIBRARY_PATH  (When the environment variable LD_LIBRARY_PATH is written in PinePhone's .profile)  
-    Value : /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling  
 <br>
 
 * Setting up the Qt compiler Linaro GCC AArh64 Toolchain.  
@@ -291,35 +279,64 @@ Sysroot(It can be set or unset) : /\<System Root PinePhone\>
 * Setting Add GDB Start Command.  
 Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab  
 Additional Startup Commands : set sysroot target:/  
+<br>
 
-**Above setting detail:**  
-**When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.**  
-**So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.**  
-**but, "set sysroot target:/" takes a long time to start debugging,**  
-**so writing the following setting will speed up the start of debugging.**  
+## 10.2 Setting up each project in Qt Creator  
+Launch Qt Creator and Open or Create Qt Project.  
+<br>
+
+Qt Creator - [Project] - [Run] - [Run Settings] - [Environment] - [Details] - [Add]  
+then, Click [Fetch Device Environment]Button.  
+**<u>when you run the debugger, Be sure to click on [Fetch Device Environment]Button.</u>**  
+
+* Variable - QT_QPA_PLATFORMTHEME  
+Value - qt5ct  
+    
+* Variable : DISPLAY  
+Value : 0  or   Value : 0.0  
+    
+* Variable : LD_LIBRARY_PATH  
+<u>(If you write the environment variable LD_LIBRARY_PATH in PinePhone's .profile, you need to set this.)</u>  
+Value : /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling  
+<br>
+
+# 11. Warning and Error related  
+## 11.2 Debug start speed issues  
+When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.  
+So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.  
+<br>
+but, <code>"set sysroot target:/"</code> takes a long time to start debugging,  
+so writing the following setting will speed up the start of debugging.  
+<br>
+First, Create the directories and symbolic links shown below.  
 
     mkdir -p /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
     ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
     mv /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/<Qt Library for PinePhone> \  
        /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/Qt_5_15_2  
-
-Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab  
-Additional Startup Commands : set sysroot /＜System Root PinePhone＞  
 <br>
 
-**For the warning shown below**  
+Next, Write the following settings.  
+Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab - [Additional Startup Commands]  
+
+    set sysroot /＜System Root PinePhone＞  
+<br>
+
+## 10.3 Floating point warning in GDB  
+When you use GCC AArch64 TooChain 7.5 GDB, the following warning is displayed.  
+<br>
+**The warning shown below**  
 
 	while parsing target description (at line 68): Vector "v8f" references undefined type "ieee_half"  
 	Could not load XML target description; ignoring  
 <br>
 
-I don't know if this is the right way to do it,  
-if you use GDB for the GCC AArch64 ToolChain, you won't get the warning output.  
-
-Download the GCC AArch64 ToolChain here.  
-Download "AArch64 GNU/Linux target (aarch64-none-linux-gnu)".  
+<u>I don't know if this is the right way to do it,</u>  
+if you use "GDB for the GCC AArch64 ToolChain 10.2", you won't get the warning output.  
+<br>
+Download the GCC AArch64 ToolChain 10.2, shown bellow URL.  
+You need to select <u>"AArch64 GNU/Linux target (aarch64-none-linux-gnu)"<u>.  
 https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads  
-<br>
-<br>
+<br><br>
 
 Make sure you can debug Qt project.  
