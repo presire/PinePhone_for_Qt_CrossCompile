@@ -295,17 +295,16 @@ Additional Startup Commands : set sysroot target:/
 **Above setting detail:**  
 **When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.**  
 **So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.**  
-<br>
-**but, "target:/" takes a long time to start debugging, so writing the following setting will speed up the start of debugging.**  
-	mkdir -p /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware
-	ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
-	mv /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/<Qt Library for PinePhone> \  
-	   /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/Qt_5_15_2  
-<br>
+**but, "set sysroot target:/" takes a long time to start debugging,**  
+**so writing the following setting will speed up the start of debugging.**  
+
+    mkdir -p /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
+    ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
+    mv /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/<Qt Library for PinePhone> \  
+       /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/Qt_5_15_2  
 
 Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab  
-Additional Startup Commands : set sysroot /<System Root PinePhone>  
-<br>
+Additional Startup Commands : set sysroot /＜System Root PinePhone＞  
 <br>
 
 **For the warning shown below**  
