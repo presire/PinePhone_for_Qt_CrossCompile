@@ -296,11 +296,23 @@ Additional Startup Commands : set sysroot target:/
 **When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.**  
 **So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.**  
 <br>
+**but, "target:/" takes a long time to start debugging, so writing the following setting will speed up the start of debugging.**  
+	mkdir -p /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware
+	ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
+	mv /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/<Qt Library for PinePhone> \  
+	   /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/Qt_5_15_2  
+<br>
+
+Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab  
+Additional Startup Commands : set sysroot /<System Root PinePhone>  
+<br>
+<br>
 
 **For the warning shown below**  
 
-***while parsing target description (at line 68): Vector "v8f" references undefined type "ieee_half"***  
-***Could not load XML target description; ignoring***  
+	while parsing target description (at line 68): Vector "v8f" references undefined type "ieee_half"  
+	Could not load XML target description; ignoring  
+<br>
 
 I don't know if this is the right way to do it,  
 if you use GDB for the GCC AArch64 ToolChain, you won't get the warning output.  
@@ -308,6 +320,7 @@ if you use GDB for the GCC AArch64 ToolChain, you won't get the warning output.
 Download the GCC AArch64 ToolChain here.  
 Download "AArch64 GNU/Linux target (aarch64-none-linux-gnu)".  
 https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads  
-
+<br>
+<br>
 
 Make sure you can debug Qt project.  
