@@ -301,11 +301,11 @@ Value : /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:/home/<PineP
 <br>
 
 # 11. Warning and Error related  
-## 11.2 Debug start speed issues  
+## 11.1 Debug start speed issues  
 When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.  
 So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.  
 <br>
-but, <code>"set sysroot target:/"</code> takes a long time to start debugging,  
+<u>but, <code>"set sysroot target:/"</code> takes a long time to start debugging,</u>  
 so writing the following setting will speed up the start of debugging.  
 <br>
 First, Create the directories and symbolic links shown below.  
@@ -322,7 +322,7 @@ Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab - [Additional Startup Com
     set sysroot /＜System Root PinePhone＞  
 <br>
 
-## 10.3 Floating point warning in GDB  
+## 11.2 Floating point warning in GDB  
 When you use GCC AArch64 TooChain 7.5 GDB, the following warning is displayed.  
 <br>
 **The warning shown below**  
