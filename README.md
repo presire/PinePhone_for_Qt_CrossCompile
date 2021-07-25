@@ -1,9 +1,9 @@
 # PinePhone(Mobian OS)_for_Qt_CrossCompile  
 
 # Preface  
-**This article is Qt 5.15.2 Cross-Compile and Remote Debug.**  
+**This article is Qt 5.15.2 Cross-Compile and Remote Debug for PinePhone.**  
 <br>
-Here, my Linux PC is SUSE, my PinePhone is Mobian(Phosh).  
+Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh).  
 When building Qt, please adapt to each user's environment.  
 <br>
 If you are using Mobian OS, I think that it is similar to the Cross-Compilation procedure for Raspberry Pi.  
