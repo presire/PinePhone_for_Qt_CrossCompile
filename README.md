@@ -1,9 +1,9 @@
-# PinePhone(Mobian OS)_for_Qt_CrossCompile  
+# Qt Cross-Compilation for PinePhone 
 
 # Preface  
 **This article is Qt 5.15.2 Cross-Compile and Remote Debug for PinePhone.**  
 <br>
-Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh).  
+Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh) and Manjaro ARM(Phosh).  
 When building Qt, please adapt to each user's environment.  
 <br>
 If you are using Mobian OS, I think that it is similar to the Cross-Compilation procedure for Raspberry Pi.  
@@ -13,7 +13,7 @@ If you are using Mobian OS, I think that it is similar to the Cross-Compilation 
 *If you have successfully built using GCC AArch64 ToolChain 10.2, please let me know the procedure.*  
 <br>
 
-# 1. Install the necessary dependencies for PinePhone and SSH Setting (Mobian OS)
+# 1. Install the necessary dependencies for PinePhone and SSH Setting (PinePhone)
 Create a directory for installing Qt libraries on PinePhone.  
 *This directory will be used in the last part of this article.*  
 
@@ -22,24 +22,39 @@ Create a directory for installing Qt libraries on PinePhone.
 
 Get the latest updates on PinePhone.  
 
+    # Mobian
     sudo apt-get update  
     sudo apt-get dist-upgrade  
     sudo shutdown -r now  
+
+    # Manjaro
+    sudo pacman -Syyu
+    sudo shutdown -r now
 <br>
 
 Install SSH server on PinePhone.  
 
+    # Mobian
     sudo apt-get install openssh-server  
+
+    # Manjaro
+    sudo pacman -S openssh
 <br>
 
 Configure the SSH Server to start automatically, and start the SSH Server.  
 
+    # Mobian
     sudo systemctl enable ssh  
     sudo systemctl restart ssh  
+
+    # Manjaro
+    sudo systemctl enable sshd  
+    sudo systemctl restart sshd  
 <br>
 
 Install the dependencies required to build the Qt Library.  
 
+    # Mobian
     sudo apt-get install  build-essential cmake unzip pkg-config gdbserver python python3 gfortran gdbserver python python3 \  
                           ccache libicu-dev icu-devtools libhd-dev libsctp1 libsctp-dev libatspi2.0-0 libatspi2.0-dev libzstd1 libzstd-dev \  
                           libinput-bin libinput-dev libts0 libts-bin libts-dev libmtdev1 libmtdev-dev libevdev2 libevdev-dev \  
@@ -50,10 +65,21 @@ Install the dependencies required to build the Qt Library.
                           libatspi2.0-0 libatspi2.0-dev libsctp1 libsctp-dev \  
                           libwayland-bin libwayland-dev libwayland-egl++0 libwayland-egl-backend-dev libwayland-client++0 libwayland-client-extra++0 libwayland-cursor++0 wayland-scanner++ \
                           waylandpp-dev libweston-9-dev libgles2-mesa-dev libegl-dev libgegl-dev libegl1-mesa-dev libgles-dev libwayland-egl1-mesa
+    
+    # Manjaro
+    sudo pacman -S base-devel rsync util-linux-libs glib2 make cmake unzip pkg-config \
+                   gdb gdb-common gdbm gcc gcc-libs gcc-fortran python2 python3 \
+                   ccache icu lksctp-tools python-atspi zstd libinput libtsm mtdev \
+                   libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus nss \
+                   libxkbcommon alsa-lib libxinerama pugixml sqlite libxslt openssl ffmpeg \
+                   wayland wayland-utils wayland-protocols egl-wayland waylandpp \
+                   waylandpp wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
+                   mesa mesa-utils glu libglvnd
 <br>
 
 *If you want to use other features, you should also install the following dependencies.*  
 
+**Mobian**
 * Bluetooth  
 bluez bluez-tools libbluetooth-dev	
 
@@ -78,6 +104,60 @@ pulseaudio libpulse-dev
 
 * OpenAL audio  
 libopenal-data libsndio7.0 libopenal1 libopenal-dev  
+<br>
+
+**Manjaro**
+* Bluetooth  
+bluez bluez-tools bluez-libs bluez-utils	
+
+* Photo  
+openjpeg2 libjpeg-turbo libpng libtiff  
+
+* Codec  
+v4l-utils xvidcore x264 x265  
+
+* Multimedia  
+gstreamer gstreamermm gst-plugins-base gst-plugins-base-libs gst-plugins-good
+gst-plugins-bad gst-plugins-bad-libs gst-plugins-ugly gst-libav gst-plugin-wpe
+gst-plugin-pipewire gst-plugin-gtk qt-gstreamer gst-plugin-qmlgl gst-plugin-opencv  
+
+* ALSA audio  
+alsa-lib  
+
+* Pulse audio  
+pulseaudio-alsa	 
+
+* OpenAL audio  
+openal  
+
+* Text to Speech  
+flite  
+
+* Qt SerialPort  
+libserialport  
+
+* Qt Sensor  
+sensorfw-git  
+
+* Database  
+PostgreSQL : postgresql-libs libpqxx  
+MariaDB : mariadb-clients mariadb-libs  
+SQLite : sqlite  
+
+* Printer  
+libcups  
+
+* Accessibility  
+at-spi2-core at-spi2-atk  
+
+* SCTP  
+lksctp-tools  
+(To enable this, add the **-sctp** option when configuring.)  
+
+* Webengine  
+Required : flex bison gperf readline nss libdrm  
+Option1 : libxml2 libxml++ libxslt minizip jsoncpp lcms2 libevent protobuf protobuf-c  
+Option2(Be careful, as it is unstable.) : opus libvpx  
 <br>
 
 Use the rsync command to synchronize the files between Linux PC and PinePhone.  
@@ -175,13 +255,13 @@ Build the Qt source code.
     -device linux-pinephone-g++ \  
     -device-option CROSS_COMPILE=/<Linaro GCC ARM 7.5 Tool Chain Directory>/bin/aarch64-linux-gnu- \  
     -nomake examples -no-compile-examples -nomake tests -make libs -no-use-gold-linker -recheck-all \  
-    -skip qtscript -skip qtwebengine -skip qtandroidextras -skip qtmacextras -skip qtwinextras \  (If not required)  
+    -skip qtwebengine -skip qtandroidextras -skip qtmacextras -skip qtwinextras \  
+    -skip qtscript -skip qtdoc \                                          (If not required)  
     -skip qtgamepad -skip qtpurchasing -skip qtcharts -skip qtsensors \   (If not required)  
     -skip qtlocation -skip qtspeech -skip qtlottie \                      (If not required)  
-    -skip qtdoc \  
-    -sysroot /<System Root PinePhone> \  
-    -prefix /<in the future, You develop Qt Software's Directory> \  
-    -extprefix /<Qt Library for PinePhone> \  
+    -sysroot    /<System Root PinePhone> \  
+    -prefix     /<in the future, You develop Qt Software's Directory> \  
+    -extprefix  /<Qt Library for PinePhone> \  
     -hostprefix /<Qt Tool for Linux PC>  
 <br>
 
@@ -199,7 +279,7 @@ Deploy the built Qt library to PinePhone.
     <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2  
 <br>
 
-# 9. Setting Qt LIBRARY Path and etc... (Mobian OS)
+# 9. Setting Qt LIBRARY Path and etc... (PinePhone)
 <del>Since the Qt Library you uploaded to PinePhone may have root privileges, execute the following command.</del>  
 
     <del>sudo chown -R <PinePhone's User Name>:<PinePhone's Group Name> ~/InstallSoftware/Qt_5_15_2</del>  
@@ -298,10 +378,25 @@ Value : 0  or   Value : 0.0
 * Variable : LD_LIBRARY_PATH  
 <u>(If you write the environment variable LD_LIBRARY_PATH in PinePhone's .profile, you need to set this.)</u>  
 Value : /home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/lib:/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2/plugins/qmltooling  
-<br>
+<br><br>
 
 # 11. Warning and Error related  
-## 11.1 Debug start speed issues  
+## 11.1 Screen display-related errors for Debug  
+When debugging, the following error is output.<br>
+
+    Failed to create wl_display (No such file or directory)
+    ...
+    error: XDG_RUNTIME_DIR not set in the environment
+    ...
+    qt.qpa.plugin: Could not load the Qt platform plugin "wayland"
+<br>
+
+To fix this error,<br>
+Qt Creator Side-Menu [Projects] - [Build & Run] - [Run] - [Command line arguments:]entry,<br>
+Add the **-platform wayland** option to the [aaa] entry.<br>
+<br>
+
+## 11.2 Debug start speed issues  
 When you debug remote targets, GDB Debugger is looking in the local PinePhone's System-Root directory for the libraries.  
 So just need to tell GDB Debugger to load the remote PinePhone's System-Root from the remote target.  
 <br>
@@ -310,10 +405,10 @@ so writing the following setting will speed up the start of debugging.
 <br>
 First, Create the directories and symbolic links shown below.  
 
-    mkdir -p /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
-    ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware  
-    mv /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/<Qt Library for PinePhone> \  
-       /<PinePhone's System-Root Directory>/home/mobian/InstallSoftware/Qt_5_15_2  
+    mkdir -p /<PinePhone's System-Root Directory>/home/<PinePhone's User Name>/InstallSoftware  
+    ln -s /<Qt Library for PinePhone> /<PinePhone's System-Root Directory>/home/<PinePhone's User Name>/InstallSoftware  
+    mv /<PinePhone's System-Root Directory>/home/<PinePhone's User Name>/InstallSoftware/<Qt Library for PinePhone> \  
+       /<PinePhone's System-Root Directory>/home/<PinePhone's User Name>/InstallSoftware/Qt_5_15_2  
 <br>
 
 Next, Write the following settings.  
@@ -322,7 +417,7 @@ Qt Creator - [Tool] - [Option] - [Debugger] - [GDB]Tab - [Additional Startup Com
     set sysroot /＜System Root PinePhone＞  
 <br>
 
-## 11.2 Floating point warning in GDB  
+## 11.3 Floating point warning in GDB  
 When you use GCC AArch64 TooChain 7.5 GDB, the following warning is displayed.  
 <br>
 **The warning shown below**  
