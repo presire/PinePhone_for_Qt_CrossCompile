@@ -111,7 +111,7 @@ libopenal-data libsndio7.0 libopenal1 libopenal-dev
 bluez bluez-tools bluez-libs bluez-utils	
 
 * Photo  
-openjpeg2 libjpeg-turbo libpng libtiff  
+openjpeg2 libjpeg-turbo libpng libtiff libmng  
 
 * Codec  
 ffmpeg v4l-utils xvidcore x264 x265  
