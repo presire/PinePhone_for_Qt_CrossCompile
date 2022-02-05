@@ -45,11 +45,11 @@ Configure the SSH Server to start automatically, and start the SSH Server.
 
     # Mobian
     sudo systemctl enable ssh  
-    sudo systemctl restart ssh  
+    sudo systemctl start ssh  
 
     # Manjaro
     sudo systemctl enable sshd  
-    sudo systemctl restart sshd  
+    sudo systemctl start sshd  
 <br>
 
 Install the dependencies required to build the Qt Library.  
@@ -67,14 +67,14 @@ Install the dependencies required to build the Qt Library.
                           waylandpp-dev libweston-9-dev libgles2-mesa-dev libegl-dev libgegl-dev libegl1-mesa-dev libgles-dev libwayland-egl1-mesa
     
     # Manjaro
-    sudo pacman -S base-devel rsync util-linux-libs glib2 make cmake unzip pkg-config \
-                   gdb gdb-common gdbm gcc gcc-libs gcc-fortran python2 python3 \
-                   ccache icu lksctp-tools python-atspi zstd libinput libtsm mtdev \
-                   libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus nss \
-                   libxkbcommon alsa-lib libxinerama pugixml sqlite libxslt openssl ffmpeg \
-                   wayland wayland-utils wayland-protocols egl-wayland waylandpp \
-                   waylandpp wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
-                   mesa mesa-utils glu libglvnd
+    sudo pacman -S --needed base-devel rsync vi vim util-linux-libs glib2 make cmake unzip pkg-config \
+                            gdb gdb-common gdbm gcc gcc-libs gcc-fortran python2 python3 \
+                            ccache icu lksctp-tools python-atspi zstd libinput libtsm mtdev \
+                            libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus nss \
+                            libxkbcommon alsa-lib libxinerama pugixml sqlite libxslt openssl ffmpeg \
+                            wayland wayland-utils wayland-protocols egl-wayland waylandpp \
+                            waylandpp wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
+                            mesa mesa-utils glu libglvnd
 <br>
 
 *If you want to use other features, you should also install the following dependencies.*  
@@ -114,7 +114,7 @@ bluez bluez-tools bluez-libs bluez-utils
 openjpeg2 libjpeg-turbo libpng libtiff  
 
 * Codec  
-v4l-utils xvidcore x264 x265  
+ffmpeg v4l-utils xvidcore x264 x265  
 
 * Multimedia  
 gstreamer gstreamermm gst-plugins-base gst-plugins-base-libs gst-plugins-good
@@ -136,13 +136,10 @@ flite
 * Qt SerialPort  
 libserialport  
 
-* Qt Sensor  
-sensorfw-git  
-
 * Database  
 PostgreSQL : postgresql-libs libpqxx  
-MariaDB : mariadb-clients mariadb-libs  
-SQLite : sqlite  
+MariaDB    : mariadb-clients mariadb-libs  
+SQLite     : sqlite  
 
 * Printer  
 libcups  
