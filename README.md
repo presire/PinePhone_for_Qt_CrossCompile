@@ -1,4 +1,6 @@
-# Qt Cross-Compilation for PinePhone 
+# Qt Cross-Compilation for PinePhone
+Revision Date : 2022/02/06<br>
+<br><br>
 
 # Preface  
 **This article is Qt 5.15.2 Cross-Compile and Remote Debug for PinePhone.**  
@@ -11,7 +13,7 @@ If you are using Mobian OS, I think that it is similar to the Cross-Compilation 
 *Note:*  
 *GCC AArch64 ToolChain 10.2 is not used because the Configure script fails.*  
 *If you have successfully built using GCC AArch64 ToolChain 10.2, please let me know the procedure.*  
-<br>
+<br><br>
 
 # 1. Install the necessary dependencies for PinePhone and SSH Setting (PinePhone)
 Create a directory for installing Qt libraries on PinePhone.  
@@ -38,7 +40,7 @@ Install SSH server on PinePhone.
     sudo apt-get install openssh-server  
 
     # Manjaro
-    sudo pacman -S openssh
+    sudo pacman -S --needed openssh
 <br>
 
 Configure the SSH Server to start automatically, and start the SSH Server.  
@@ -188,6 +190,22 @@ Create the directories needed for the build.
     git clone https://github.com/presire/PinePhone_for_Qt_CrossCompile.git
     
     cp -r PinePhone_for_Qt_CrossCompile/linux-pinephone-g++ qt-everywhere-src-5.15.2/qtbase/mkspecs/devices  
+<br>
+
+In the downloaded and copied qmake.conf,<br>
+comment **DISTRO_OPTS += deb-multi-arch** if you want to use Manjaro ARM.<br>
+
+    vi qt-everywhere-src-5.15.2/qtbase/mkspecs/devices/linux-pinephone-g++/qmake.conf
+<br>
+
+    # qt-everywhere-src-5.15.2/qtbase/mkspecs/devices/linux-pinephone-g++/qmake.conf file
+    
+    ...
+
+    # If you use Manjaro ARM, you need to comment it.
+    #DISTRO_OPTS += deb-multi-arch
+
+    ...
 <br>
 
 # 4. Setting Linux PC and Download GCC ARM Toolchain (Linux PC)
