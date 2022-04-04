@@ -211,23 +211,60 @@ comment **DISTRO_OPTS += deb-multi-arch** if you want to use Manjaro ARM.<br>
 <br>
 
 # 4. Setting Linux PC and Download GCC ARM Toolchain (Linux PC)
-## 4.1. Use Linaro GCC Toolchain
-Install the dependencies required to build the Qt Library for Linux PC. (I use SUSE)  
-(Perhaps **texinfo** is unnecessary.)  
+First, Install the dependencies required to build the Qt Library for Linux PC.  
+*(Perhaps **texinfo** is unnecessary.)*  
 
     sudo zypper install autoconf automake cmake unzip tar git wget pkg-config gperf gcc gcc-c++ \  
                         gawk bison openssl flex figlet pigz ncurses-devel ncurses5-devel texinfo  
 <br>
 
-Download GCC ARM Toolchain. (https://releases.linaro.org/components/toolchain/binaries)  
+Next, download or install GCC ToolChain for AArch64.  
+There are two ways to use the GCC ToolChain for AArch64.  
+<br>
+
+## If create GCC ToolChain for PinePhone (Recommend)
+Access the URL shown below to create a GCC ToolChain.  
+https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone  
+<br>
+**Note :**  
+**However, when building <u>Qt 5.15</u>, the following error occurs when using <u>GCC 11 or later</u>.**  
+
+    error: 'numeric_limits' is not a member of 'std'  static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+
+    error: expected primary-expression before '>' token  static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+
+    error: '::max' has not been declared; did you mean 'std::max'?   static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
+<br>
+
+This is because std::limits has been removed and moved to the limits.h file.  
+<br>
+If you are building Qt 5.15 using GCC 11 or later,  
+edit the file "qt-everywhere-src-5.15.2/qtbase/src/corelib/global/qglobal.h" (**Around lines 45-48**) as shown below.  
+
+    vi qt-everywhere-src-5.15.2/qtbase/src/corelib/global/qglobal.h
+
+    // Before Edit
+    #ifdef __cplusplus
+    #  include <type_traits>
+    #  include <cstddef>
+    #  include <utility>
+    #endif
+    
+    // After Edit
+    #ifdef __cplusplus
+    #  include <type_traits>
+    #  include <cstddef>
+    #  include <utility>
+    #include <limits>          // <- Add a line. (include limits.h file)
+    #endif
+<br>
+
+## If use Linaro GCC Toolchain
+Download Linaro GCC ARM Toolchain.  
+https://releases.linaro.org/components/toolchain/binaries  
 
     wget https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
     tar xf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
-<br>
-
-## 4.2. Create GCC ToolChain for PinePhone
-Or, access the URL shown below to create a GCC ToolChain.  
-https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone  
 <br>
 
 # 5. Download & Install Wayland-Scanner (Linux PC)
@@ -271,13 +308,15 @@ Build the Qt source code.
 
     export PATH="/<Qt Tool for Linux PC>/bin:$PATH"  
     
-    PKG_CONFIG_PATH=/<System Root PinePhone>/usr/lib/aarch64-linux-gnu/pkgconfig \  
+    PKG_CONFIG_PATH=/<System Root PinePhone>/usr/lib/pkgconfig:/<System Root PinePhone>/usr/lib/aarch64-linux-gnu/pkgconfig \  
     PKG_CONFIG_LIBDIR=/<System Root PinePhone>/usr/lib/pkgconfig:/<System Root>/usr/lib/aarch64-linux-gnu/pkgconfig:/<System Root>/usr/share/pkgconfig \  
-    ../<qt-everywhere-src-5.15.2>/configure -v -release  -opensource -confirm-license \  
+    ../<qt-everywhere-src-5.15.2>/configure -v \
+    -release \
+    -opensource -confirm-license \  
     -opengl es2 \  
     -qpa wayland \  
     -device linux-pinephone-g++ \  
-    -device-option CROSS_COMPILE=/<Linaro GCC ARM 7.5 Tool Chain Directory>/bin/aarch64-linux-gnu- \  
+    -device-option CROSS_COMPILE=/<GCC ToolChain Directory>/bin/aarch64-linux-gnu- \  
     -nomake examples -no-compile-examples -nomake tests -make libs -no-use-gold-linker -recheck-all \  
     -skip qtwebengine -skip qtandroidextras -skip qtmacextras -skip qtwinextras \  
     -skip qtscript -skip qtdoc \                                          (If not required)  
