@@ -1,5 +1,5 @@
 # Qt Cross-Compilation for PinePhone
-Revision Date : 2022/02/06<br>
+Revision Date : 2022/04/04<br>
 <br><br>
 
 # Preface  
@@ -72,11 +72,11 @@ Install the dependencies required to build the Qt Library.
     sudo pacman -S --needed base-devel rsync vi vim util-linux-libs glib2 make cmake unzip pkg-config \
                             gdb gdb-common gdbm gcc gcc-libs gcc-fortran python2 python3 \
                             ccache icu lksctp-tools python-atspi zstd libinput libtsm mtdev \
-                            libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus nss \
+                            libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus dbus-c++ nss \
                             libxkbcommon alsa-lib libxinerama pugixml sqlite libxslt openssl ffmpeg \
                             wayland wayland-utils wayland-protocols egl-wayland waylandpp \
                             waylandpp wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
-                            mesa mesa-utils glu libglvnd
+                            mesa mesa-utils glu libglvnd libb2 lttng-ust libproxy
 <br>
 
 *If you want to use other features, you should also install the following dependencies.*  
@@ -171,6 +171,8 @@ With the following settings, the rsync command will be executed with super user 
 Restart PinePhone just in case.  
 
     sudo shutdown -r now
+    # or
+    sudo systemctl reboot
 <br>
 
 # 2. Qt Source Code Download and etc... (Linux PC)
@@ -250,6 +252,7 @@ It is necessary to synchronize with the root directory of PinePhone, create the 
 
 Adjust the symbolic links of downloaded files and directories relative to each other.  
 Since fixQualifiedLibraryPaths does not work properly, download and run the script provided.  
+<u>**However, this setting is probably unnecessary.**</u>  
 
     wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py  
     chmod +x sysroot-relativelinks.py  
