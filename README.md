@@ -211,6 +211,7 @@ comment **DISTRO_OPTS += deb-multi-arch** if you want to use Manjaro ARM.<br>
 <br>
 
 # 4. Setting Linux PC and Download GCC ARM Toolchain (Linux PC)
+## 4.1. Use Linaro GCC Toolchain
 Install the dependencies required to build the Qt Library for Linux PC. (I use SUSE)  
 (Perhaps **texinfo** is unnecessary.)  
 
@@ -222,6 +223,11 @@ Download GCC ARM Toolchain. (https://releases.linaro.org/components/toolchain/bi
 
     wget https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
     tar xf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
+<br>
+
+## 4.2. Create GCC ToolChain for PinePhone
+Or, access the URL shown below to create a GCC ToolChain.  
+https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone  
 <br>
 
 # 5. Download & Install Wayland-Scanner (Linux PC)
@@ -450,6 +456,13 @@ if you use "GDB for the GCC AArch64 ToolChain 10.2", you won't get the warning o
 Download the GCC AArch64 ToolChain 10.2, shown bellow URL.  
 You need to select <u>"AArch64 GNU/Linux target (aarch64-none-linux-gnu)"<u>.  
 https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads  
+<br>
+
+**Note :**  
+**The best way is to create your own GCC Toolchain for PinePhone.**  
+**The URL shown below describes how to create a GCC Toolchain.**  
+<br>
+**https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone.git**  
 <br><br>
 
 Make sure you can debug Qt project.  
