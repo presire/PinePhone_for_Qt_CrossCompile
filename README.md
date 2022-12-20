@@ -1,18 +1,23 @@
 # Qt Cross-Compilation for PinePhone
-Revision Date : 2022/04/04<br>
+Revision Date : 2022/12/21<br>
 <br><br>
 
 # Preface  
-**This article is Qt 5.15.2 Cross-Compile and Remote Debug for PinePhone.**  
+**This article is Qt 5.15 Cross-Compile and Remote Debug for PinePhone.**  
+**I am building a cross compile environment with Qt 5.15.2 and Qt 5.15.6.**  
 <br>
 Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh) and Manjaro ARM(Phosh).  
 When building Qt, please adapt to each user's environment.  
 <br>
 If you are using Mobian OS, I think that it is similar to the Cross-Compilation procedure for Raspberry Pi.  
 <br>
-*Note:*  
-*GCC AArch64 ToolChain 10.2 is not used because the Configure script fails.*  
-*If you have successfully built using GCC AArch64 ToolChain 10.2, please let me know the procedure.*  
+**Note:**  
+**If you want to use the latest GCC AArch64 ToolChain,**  
+**you need to build GCC yourself by referring to the URL shown below.**  
+
+https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone.git  
+
+**It is easy to create and is recommended.**  
 <br><br>
 
 # 1. Install the necessary dependencies for PinePhone and SSH Setting (PinePhone)
@@ -176,8 +181,13 @@ Restart PinePhone just in case.
 <br>
 
 # 2. Qt Source Code Download and etc... (Linux PC)
+    # Qt 5.15.2
     wget https://download.qt.io/official_releases/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz  
     tar xf qt-everywhere-opensource-src-5.15.2.tar.gz  
+
+    # Qt 5.15.6
+    https://download.qt.io/official_releases/qt/5.15/5.15.6/single/qt-everywhere-opensource-src-5.15.6.tar.xz  
+    tar xf qt-everywhere-opensource-src-5.15.6.tar.gz  
 <br>
 Create the directories needed for the build.  
 
@@ -227,7 +237,8 @@ Access the URL shown below to create a GCC ToolChain.
 https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone  
 <br>
 **Note :**  
-**However, when building <u>Qt 5.15</u>, the following error occurs when using <u>GCC 11 or later</u>.**  
+**When building <u>Qt 5.15</u>, the following error occurs when using <u>GCC 11 or later</u>.**  
+**However, no modification is required when building Qt 5.15.6.**  
 
     error: 'numeric_limits' is not a member of 'std'  static_cast<quint16>(numbers.size()) : std::numeric_limits<quint16>::max();
 
@@ -238,7 +249,7 @@ https://github.com/presire/How_to_create_GCC_ToolChain_for_PinePhone
 
 This is because std::limits has been removed and moved to the limits.h file.  
 <br>
-If you are building Qt 5.15 using GCC 11 or later,  
+If you are building Qt 5.15.2 using GCC 11 or later,  
 edit the file "qt-everywhere-src-5.15.2/qtbase/src/corelib/global/qglobal.h" (**Around lines 45-48**) as shown below.  
 
     vi qt-everywhere-src-5.15.2/qtbase/src/corelib/global/qglobal.h
@@ -291,16 +302,6 @@ It is necessary to synchronize with the root directory of PinePhone, create the 
     rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/lib ~/<System Root PinePhone>/usr  
     rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/include ~/<System Root PinePhone>/usr  
     rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig ~/<System Root PinePhone>/usr/share  
-<br>
-
-Adjust the symbolic links of downloaded files and directories relative to each other.  
-Since fixQualifiedLibraryPaths does not work properly, download and run the script provided.  
-<u>**However, this setting is probably unnecessary.**</u>  
-
-    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py  
-    chmod +x sysroot-relativelinks.py  
-    
-    ./sysroot-relativelinks.py ~/<System Root PinePhone>  
 <br>
 
 # 7. Build Qt Source Code (Linux PC)
