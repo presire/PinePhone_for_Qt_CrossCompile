@@ -1,10 +1,10 @@
 # Qt Cross-Compilation for PinePhone
-Revision Date : 2022/12/21<br>
+Revision Date : 2023/03/19<br>
 <br><br>
 
 # Preface  
 **This article is Qt 5.15 Cross-Compile and Remote Debug for PinePhone.**  
-**I am building a cross compile environment with Qt 5.15.2 and Qt 5.15.6.**  
+**I am building a cross compile environment with Qt 5.15.2 (Mobian) and Qt 5.15.2, 5.15.6, and 5.15.8 (Manjaro ARM).**  
 <br>
 Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh) and Manjaro ARM(Phosh).  
 When building Qt, please adapt to each user's environment.  
@@ -80,7 +80,7 @@ Install the dependencies required to build the Qt Library.
                             libevdev libffi pcre pcre2 libwacom assimp fontconfig dbus dbus-c++ nss \
                             libxkbcommon alsa-lib libxinerama pugixml sqlite libxslt openssl ffmpeg \
                             wayland wayland-utils wayland-protocols egl-wayland waylandpp \
-                            waylandpp wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
+                            wrapland wlc wayfire glew-wayland glfw-wayland libva1 \
                             mesa mesa-utils glu libglvnd libb2 lttng-ust libproxy
 <br>
 
