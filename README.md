@@ -1,5 +1,5 @@
 # Qt Cross-Compilation for PinePhone
-Revision Date : 2023/03/19<br>
+Revision Date : 2023/11/10<br>
 <br><br>
 
 # Preface  
