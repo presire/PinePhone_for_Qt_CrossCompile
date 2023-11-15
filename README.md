@@ -1,10 +1,10 @@
-# Qt Cross-Compilation for PinePhone
-Revision Date : 2023/11/10<br>
+# Qt 5 CrossCompile for PinePhone
+Revision Date : 2023/11/16<br>
 <br><br>
 
 # Preface  
 **This article is Qt 5.15 Cross-Compile and Remote Debug for PinePhone.**  
-**I am building a cross compile environment with Qt 5.15.2 (Mobian) and Qt 5.15.2, 5.15.6, and 5.15.8 (Manjaro ARM).**  
+**I am building a cross compile environment with Qt 5.15.2, 5.15.11 (Mobian) and Qt 5.15.2, 5.15.6, 5.15.8, 5.15.11 (Manjaro ARM).**  
 <br>
 Here, my Linux PC is SUSE Enterprise 15 and openSUSE 15, my PinePhone is Mobian(Phosh) and Manjaro ARM(Phosh).  
 When building Qt, please adapt to each user's environment.  
@@ -62,16 +62,29 @@ Configure the SSH Server to start automatically, and start the SSH Server.
 Install the dependencies required to build the Qt Library.  
 
     # Mobian
-    sudo apt-get install  build-essential cmake unzip pkg-config gdbserver python python3 gfortran gdbserver python python3 \  
-                          ccache libicu-dev icu-devtools libhd-dev libsctp1 libsctp-dev libatspi2.0-0 libatspi2.0-dev libzstd1 libzstd-dev \  
-                          libinput-bin libinput-dev libts0 libts-bin libts-dev libmtdev1 libmtdev-dev libevdev2 libevdev-dev \  
-                          libblkid-dev libffi-dev libglib2.0-dev libglib2.0-dev-bin libmount-dev \  
-                          libpcre16-3 libpcre3-dev libpcre32-3 libpcrecpp0v5 libselinux1-dev libsepol1-dev libwacom-dev libassimp-dev libassimp5 \  
-                          libfontconfig1-dev libdbus-1-dev libnss3-dev libxkbcommon-dev libjpeg-dev libasound2-dev libudev-dev libxcb-xinerama0 libxcb-xinerama0-dev libpugixml1v5 \  
-                          libsqlite3-dev libxslt1-dev libssl-dev \  
-                          libatspi2.0-0 libatspi2.0-dev libsctp1 libsctp-dev \  
-                          libwayland-bin libwayland-dev libwayland-egl++0 libwayland-egl-backend-dev libwayland-client++0 libwayland-client-extra++0 libwayland-cursor++0 wayland-scanner++ \
-                          waylandpp-dev libweston-9-dev libgles2-mesa-dev libegl-dev libgegl-dev libegl1-mesa-dev libgles-dev libwayland-egl1-mesa
+    sudo apt-get install  unzip ccache pkgconf-bin pkg-config libpkgconf3 pkgconf \  
+                          build-essential make autoconf cmake extra-cmake-modules gcc gfortran gdb gdbserver python3 libgtk-3-dev \  
+                          libc6 libc6-dev linux-libc-dev glibc-source libc-dev-bin libc-devtools libglib2.0-0 libglib2.0-dev libglib2.0-dev-bin \  
+                          libgmp-dev libmpc-dev libmpfr-dev libisl-dev gconf2 gconf2-common libgconf2-dev \  
+                          libdbus-1-3 libdbus-1-dev libdbus-c++-bin libdbus-c++-dev libsctp1 libsctp-dev libatspi2.0-0 libatspi2.0-dev \  
+                          libzstd1 libzstd-dev libinput-bin libinput-dev libts0 libts-bin libts-dev libmtdev1 libmtdev-dev libevdev2 \  
+                          libevdev-dev libicu-dev icu-devtools libblkid1 libblkid-dev libffi8 libffi-dev libmount1 libmount-dev \  
+                          libudev1 libudev-dev libhd21 libhd-dev libtsm-dev pcre2-utils libpcre2-32-0 libpcre2-dev libselinux1 libselinux1-dev \  
+                          libsepol2 libsepol-dev libwacom9 libwacom-dev libassimp5 libassimp-dev \  
+                          libproxy-dev liblttng-ust1 liblttng-ust-common1 liblttng-ust-dev libb2-1 libb2-dev libsdl2-dev \  
+                          libfontconfig1 libfontconfig-dev libfontconfig1-dev \  
+                          libjpeg-dev libjpeg62-turbo libjpeg62-turbo-dev libjpeg-dev libasound2 libasound2-dev \  
+                          sqlite3 libsqlite3-0 libsqlite3-dev libssl3 libssl-dev libnss3 libnss3-dev libxslt1.1 libxslt1-dev \  
+                          libpugixml1v5 libpugixml-dev \  
+                          libxkbcommon-dev libxcb-xinerama0 libxcb-xinerama0-dev libglut3.12 libglut-dev \  
+                          libwayland-bin libwayland-dev libwayland-egl1 libwayland-egl++1 libwayland-egl1-mesa libwayland-egl-backend-dev \  
+                          libwayland-client++1 libwayland-client-extra++1 libwayland-cursor++1 wayland-scanner++ wayland-protocols waylandpp-dev \  
+                          libosmesa6-dev mesa-common-dev libopengl-dev libgl-dev libglm-dev libgl1-mesa-dev libgle3-dev libgles-dev \  
+                          libgles2-mesa-dev libegl-dev libegl1-mesa-dev libgegl-dev libglu1-mesa libglu1-mesa-dev libglw1-mesa-dev \  
+                          libglfw3-dev libglew-dev libglx-dev libgbm-dev libdrm-dev libdirectfb-dev \  
+                          libglvnd-dev libglvnd-core-dev libglut-dev libopenal-dev libalut-dev \  
+                          libweston-10-0 libweston-10-dev                   \  
+                          linux-headers-arm64 linux-headers-6.1-sunxi64        # May not be necessary  
     
     # Manjaro
     sudo pacman -S --needed base-devel rsync vi vim util-linux-libs glib2 make cmake unzip pkg-config \
@@ -91,12 +104,14 @@ Install the dependencies required to build the Qt Library.
 bluez bluez-tools libbluetooth-dev	
 
 * Photo  
-libjpeg-dev libpng-dev libtiff-dev  
+libjpeg-dev libpng-dev libtiff-dev libmng-dev libwebp-dev  
 
 * Codec  
-libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev  
+libavcodec-dev libavformat-dev libavutil-dev libavdevice-dev libavfilter-dev libswscale-dev libswresample-dev  
+libpostproc-dev libv4l-dev libxvidcore-dev libx264-dev libx265-dev  
 
 * Multimedia  
+libwmf-dev  
 libgstreamer1.0-0 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base  
 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad  
 libgstreamer-plugins-bad1.0-dev gstreamer1.0-libav gstreamer1.0-pulseaudio gstreamer1.0-tools  
@@ -110,7 +125,29 @@ libasound2-dev
 pulseaudio libpulse-dev	 
 
 * OpenAL audio  
-libopenal-data libsndio7.0 libopenal1 libopenal-dev  
+libopenal1 libopenal-data libopenal-dev libsndio7.0 libsndio-dev  
+
+ Text to Speech  
+flite1-dev libspeechd-dev  
+
+* Qt SerialPort  
+libserialport-dev  
+
+* Database  
+ODBC       : unixodbc unixodbc-common unixodbc-dev
+PostgreSQL : libpq-dev  
+MariaDB    : libmariadbclient-dev  
+SQLite     : libsqlite3-dev  
+
+* Printer  
+libcups2-dev  
+
+* Accessibility  
+libatspi2.0-dev  
+
+* SCTP  
+libsctp1 libsctp-dev  
+(To enable this, add the **-sctp** option when configuring.)  
 <br>
 
 **Manjaro**
@@ -270,13 +307,19 @@ edit the file "qt-everywhere-src-5.15.2/qtbase/src/corelib/global/qglobal.h" (**
     #endif
 <br>
 
-## If use Linaro GCC Toolchain
-Download Linaro GCC ARM Toolchain.  
-https://releases.linaro.org/components/toolchain/binaries  
-
-    wget https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
-    tar xf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz  
+### If you use Linaro GCC Toolchain
+Linaro offers monthly GNU toolchain integration builds that provide users with a snapshot of upstream builds.  
+These builds allow developers to immediately test the functionality of pre-built binaries upstream.  
 <br>
+Download Linaro GCC ARM Toolchain.  
+(latest) GCC Tool Chain Link : https://snapshots.linaro.org/gnu-toolchain/  
+<br>
+GCC Tool Chain 12.3 Link : https://snapshots.linaro.org/gnu-toolchain/12.3-2023.06-1/aarch64-linux-gnu/  
+(old) GCC Tool Chain 7.5 Link : https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/aarch64-linux-gnu/  
+
+    tar xf gcc-linaro-<version>-x86_64_aarch64-linux-gnu.tar.xz  
+<br>
+
 
 # 5. Download & Install Wayland-Scanner (Linux PC)
 You need to install **Meson** & **Ninja** for building **Wayland-Scanner**.  
@@ -304,7 +347,39 @@ It is necessary to synchronize with the root directory of PinePhone, create the 
     rsync -avz --rsync-path="sudo rsync" --delete --rsh="ssh" <PinePhone's User Name>@<PinePhone's IP Address or Host Name>:/usr/share/pkgconfig ~/<System Root PinePhone>/usr/share  
 <br>
 
+Convert symbolic links of downloaded files and directories from absolute paths to relative paths.
+
+    wget https://raw.githubusercontent.com/riscv/riscv-poky/master/scripts/sysroot-relativelinks.py
+    chmod +x sysroot-relativelinks.py
+    
+    ./sysroot-relativelinks.py <System Root PinePhone>
+<br>
+
 # 7. Build Qt Source Code (Linux PC)
+**Note**  
+When you use **GCC 13**, QtLocation builds may output build errors as shown below.  
+
+    error: 'uint8_t' was not declared in this scope  
+<br>
+
+This is because GCC 13 shuffles some internal includes, so ***<code>cstdint</code>*** is not included transiently.  
+To use **<code>uint8_t</code>**, ***<code>cstdint</code>*** must be explicitly included.  
+
+    // qt-everywhere-src-5.15.XX/qtlocation/src/3rdparty/mapbox-gl-native/include/mbgl/util/string.hpp  
+    // Line 7.  
+    #include <cstdint>  // Add  
+    
+    
+    // qt-everywhere-src-5.15.XX/qtlocation/src/3rdparty/mapbox-gl-native/include/mbgl/util/geometry.hpp  
+    // Line 6.  
+    #include <cstdint>  // Add  
+    
+    
+    // qt-everywhere-src-5.15.XX/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/gl/stencil_mode.hpp  
+    // Line 4.  
+    #include <cstdint>  // Add  
+<br>
+
 Build the Qt source code.  
 
     export PATH="/<Qt Tool for Linux PC>/bin:$PATH"  
@@ -326,7 +401,9 @@ Build the Qt source code.
     -sysroot    /<System Root PinePhone> \  
     -prefix     /<in the future, You develop Qt Software's Directory> \  
     -extprefix  /<Qt Library for PinePhone> \  
-    -hostprefix /<Qt Tool for Linux PC>  
+    -hostprefix /<Qt Tool for Linux PC>     \
+    #-no-gcc-sysroot                             # Comment if you use Linaro GCC Toolchain.
+                                                 # If you have built your own GCC Toolchain, you may need to remove comment.
 <br>
 
 If the Configure script succeeds, execute the make or gmake command.  
