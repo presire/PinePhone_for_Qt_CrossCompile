@@ -1,5 +1,5 @@
 # Qt 5 CrossCompile for PinePhone
-Revision Date : 2023/11/16<br>
+Revision Date : 2023/11/17<br>
 <br><br>
 
 # Preface  
@@ -127,7 +127,7 @@ pulseaudio libpulse-dev
 * OpenAL audio  
 libopenal1 libopenal-data libopenal-dev libsndio7.0 libsndio-dev  
 
- Text to Speech  
+* Text to Speech  
 flite1-dev libspeechd-dev  
 
 * Qt SerialPort  
